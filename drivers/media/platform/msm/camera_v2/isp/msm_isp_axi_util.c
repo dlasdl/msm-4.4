@@ -605,8 +605,7 @@ static int msm_isp_composite_irq(struct vfe_device *vfe_dev,
  *
  * Returns void
  */
-static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info,
-		uint32_t drop_reconfig)
+static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info)
 {
 	if (stream_info->stream_type == BURST_STREAM) {
 		if (stream_info->runtime_num_burst_capture == 0 ||
@@ -674,12 +673,17 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 			__msm_isp_axi_stream_update(stream_info, ts);
 			break;
 		case MSM_ISP_COMP_IRQ_EPOCH:
+<<<<<<< HEAD
 
 			if (stream_info->state == ACTIVE) {
 				msm_isp_update_framedrop_reg(stream_info,
 					vfe_dev->common_data->drop_reconfig);
 				vfe_dev->common_data->drop_reconfig = 0;
 			}
+=======
+			if (stream_info->state == ACTIVE)
+				msm_isp_update_framedrop_reg(stream_info);
+>>>>>>> 18f59ac21ef6... Revert "msm: camera: isp: Fix frame drop pattern".
 			break;
 		default:
 			WARN(1, "Invalid irq %d\n", irq);
