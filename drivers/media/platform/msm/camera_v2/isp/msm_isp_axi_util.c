@@ -674,28 +674,12 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 			__msm_isp_axi_stream_update(stream_info, ts);
 			break;
 		case MSM_ISP_COMP_IRQ_EPOCH:
-<<<<<<< HEAD
-			if (stream_info->state == ACTIVE)
-				msm_isp_update_framedrop_reg(stream_info,
-					vfe_dev->isp_page->drop_reconfig);
-=======
+
 			if (stream_info->state == ACTIVE) {
-				struct vfe_device *temp = NULL;
-				struct msm_vfe_common_dev_data *c_data;
-				uint32_t drop_reconfig =
-					vfe_dev->isp_page->drop_reconfig;
-				if (stream_info->num_isp > 1 &&
-					vfe_dev->pdev->id == ISP_VFE0) {
-					c_data = vfe_dev->common_data;
-					temp = c_data->dual_vfe_res->vfe_dev[
-						ISP_VFE1];
-					drop_reconfig =
-						temp->isp_page->drop_reconfig;
-				}
 				msm_isp_update_framedrop_reg(stream_info,
-					drop_reconfig);
+					vfe_dev->common_data->drop_reconfig);
+				vfe_dev->common_data->drop_reconfig = 0;
 			}
->>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 			break;
 		default:
 			WARN(1, "Invalid irq %d\n", irq);
@@ -2472,7 +2456,6 @@ static void msm_isp_input_enable(struct vfe_device *vfe_dev,
 			continue;
 		/* activate the input since it is deactivated */
 		axi_data->src_info[i].frame_id = 0;
-		vfe_dev->irq_sof_id = 0;
 		if (axi_data->src_info[i].input_mux != EXTERNAL_READ)
 			axi_data->src_info[i].active = 1;
 		if (i >= VFE_RAW_0 && sync_frame_id_src) {
@@ -3111,6 +3094,7 @@ static void __msm_isp_stop_axi_streams(struct vfe_device *vfe_dev,
 		msm_isp_cfg_stream_scratch(stream_info, VFE_PING_FLAG);
 		msm_isp_cfg_stream_scratch(stream_info, VFE_PONG_FLAG);
 		stream_info->undelivered_request_cnt = 0;
+		vfe_dev->irq_sof_id = 0;
 		if (stream_info->controllable_output &&
 			stream_info->pending_buf_info.is_buf_done_pending) {
 			msm_isp_free_pending_buffer(vfe_dev, stream_info,
@@ -3625,13 +3609,13 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 	if (vfe_dev->axi_data.src_info[frame_src].active &&
 		frame_src == VFE_PIX_0 &&
 		vfe_dev->axi_data.src_info[frame_src].accept_frame == false &&
-		(stream_info->undelivered_request_cnt <=
+			(stream_info->undelivered_request_cnt <=
 			MAX_BUFFERS_IN_HW)
 		) {
 		pr_debug("%s:%d invalid time to request frame %d try drop_reconfig\n",
 			__func__, __LINE__, frame_id);
 		vfe_dev->isp_page->drop_reconfig = 1;
-<<<<<<< HEAD
+
 	} else if ((vfe_dev->axi_data.src_info[frame_src].active) &&
 			(frame_id ==
 			vfe_dev->axi_data.src_info[frame_src].frame_id) &&
@@ -3642,7 +3626,12 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			__func__, vfe_dev->pdev->id, frame_id,
 			vfe_dev->axi_data.src_info[VFE_PIX_0].frame_id,
 			vfe_dev->axi_data.src_info[VFE_PIX_0].active);
-=======
+
+		/*keep it in vfe_dev variable also to avoid skip pattern
+		 * programming the variable in page can be overwritten by MCT
+		 */
+		vfe_dev->common_data->drop_reconfig = 1;
+
 		return 0;
 	} else if ((vfe_dev->axi_data.src_info[frame_src].active) &&
 			((frame_id ==
@@ -3651,12 +3640,13 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			(stream_info->undelivered_request_cnt <=
 				MAX_BUFFERS_IN_HW)) {
 		vfe_dev->isp_page->drop_reconfig = 1;
+		vfe_dev->common_data->drop_reconfig = 1;
 		pr_debug("%s: vfe_%d request_frame %d cur frame id %d pix %d try drop_reconfig\n",
 			__func__, vfe_dev->pdev->id, frame_id,
 			vfe_dev->axi_data.src_info[VFE_PIX_0].frame_id,
 			vfe_dev->axi_data.src_info[VFE_PIX_0].active);
 		return 0;
->>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
+
 	} else if ((vfe_dev->axi_data.src_info[frame_src].active && (frame_id !=
 		vfe_dev->axi_data.src_info[frame_src].frame_id + vfe_dev->
 		axi_data.src_info[frame_src].sof_counter_step)) ||
@@ -3759,13 +3749,13 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 		if (rc) {
 			spin_unlock_irqrestore(&stream_info->lock, flags);
 			stream_info->undelivered_request_cnt--;
-<<<<<<< HEAD
+
 			pr_err_ratelimited("%s:%d fail to cfg HAL buffer\n",
 				__func__, __LINE__);
 			queue_req->cmd_used = 0;
 			list_del(&queue_req->list);
 			stream_info->request_q_cnt--;
-=======
+
 			queue_req = list_first_entry_or_null(
 				&stream_info->request_q,
 				struct msm_vfe_frame_request_queue, list);
@@ -3776,7 +3766,6 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 			}
 			pr_err_ratelimited("%s:%d fail to cfg HAL buffer stream %x\n",
 				__func__, __LINE__, stream_info->stream_id);
->>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 			return rc;
 		}
 
@@ -4417,11 +4406,11 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 		if (vfe_dev->irq_sof_id < frame_id)
 			vfe_dev->irq_sof_id = frame_id;
 
-		frame_id_diff = vfe_dev->irq_sof_id - frame_id;
+		frame_id_diff  =  vfe_dev->irq_sof_id - frame_id;
 		if (stream_info->controllable_output && frame_id_diff > 1) {
 			pr_err_ratelimited("%s: scheduling problem do recovery irq_sof_id %d frame_id %d\n",
 				__func__, vfe_dev->irq_sof_id, frame_id);
-			/* scheduling problem need to do recovery */
+			/*scheduling problem need to do recovery*/
 			stream_info->buf[pingpong_bit] = done_buf;
 			spin_unlock_irqrestore(&stream_info->lock, flags);
 			msm_isp_halt_send_error(vfe_dev,
@@ -4490,7 +4479,7 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 	*/
 		done_buf->is_drop_reconfig = 0;
 		if (!stream_info->buf[pingpong_bit]) {
-			/* samebuffer is not re-programeed so write scratch */
+			/*samebuffer is not re-programeed so program scratch*/
 			msm_isp_cfg_stream_scratch(stream_info,
 				pingpong_status);
 		}
