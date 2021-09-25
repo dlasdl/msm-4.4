@@ -212,13 +212,14 @@ static void complete_usage(struct hid_parser *parser, unsigned int index)
  * Add a usage to the temporary parser table.
  */
 
-static int hid_add_usage(struct hid_parser *parser, unsigned usage, u8 size)
+static int hid_add_usage(struct hid_parser *parser, unsigned usage)
 {
 	if (parser->local.usage_index >= HID_MAX_USAGES) {
 		hid_err(parser->device, "usage index exceeded\n");
 		return -1;
 	}
 	parser->local.usage[parser->local.usage_index] = usage;
+<<<<<<< HEAD
 
 	/*
 	 * If Usage item only includes usage id, concatenate it with
@@ -228,6 +229,8 @@ static int hid_add_usage(struct hid_parser *parser, unsigned usage, u8 size)
 		complete_usage(parser, parser->local.usage_index);
 
 	parser->local.usage_size[parser->local.usage_index] = size;
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 	parser->local.collection_index[parser->local.usage_index] =
 		parser->collection_stack_ptr ?
 		parser->collection_stack[parser->collection_stack_ptr - 1] : 0;
@@ -490,7 +493,10 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
 			return 0;
 		}
 
-		return hid_add_usage(parser, data, item->size);
+		if (item->size <= 2)
+			data = (parser->global.usage_page << 16) + data;
+
+		return hid_add_usage(parser, data);
 
 	case HID_LOCAL_ITEM_TAG_USAGE_MINIMUM:
 
@@ -498,6 +504,9 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
 			dbg_hid("alternative usage ignored\n");
 			return 0;
 		}
+
+		if (item->size <= 2)
+			data = (parser->global.usage_page << 16) + data;
 
 		parser->local.usage_minimum = data;
 		return 0;
@@ -508,6 +517,9 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
 			dbg_hid("alternative usage ignored\n");
 			return 0;
 		}
+
+		if (item->size <= 2)
+			data = (parser->global.usage_page << 16) + data;
 
 		count = data - parser->local.usage_minimum;
 		if (count + parser->local.usage_index >= HID_MAX_USAGES) {
@@ -528,7 +540,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
 		}
 
 		for (n = parser->local.usage_minimum; n <= data; n++)
-			if (hid_add_usage(parser, n, item->size)) {
+			if (hid_add_usage(parser, n)) {
 				dbg_hid("hid_add_usage failed\n");
 				return -1;
 			}
@@ -543,6 +555,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
 }
 
 /*
+<<<<<<< HEAD
  * Concatenate Usage Pages into Usages where relevant:
  * As per specification, 6.2.2.8: "When the parser encounters a main item it
  * concatenates the last declared Usage Page with a Usage to form a complete
@@ -578,6 +591,8 @@ static void hid_concatenate_last_usage_page(struct hid_parser *parser)
 }
 
 /*
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
  * Process a main item.
  */
 
@@ -586,8 +601,11 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
 	__u32 data;
 	int ret;
 
+<<<<<<< HEAD
 	hid_concatenate_last_usage_page(parser);
 
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 	data = item_udata(item);
 
 	switch (item->tag) {
@@ -805,8 +823,11 @@ static int hid_scan_main(struct hid_parser *parser, struct hid_item *item)
 	__u32 data;
 	int i;
 
+<<<<<<< HEAD
 	hid_concatenate_last_usage_page(parser);
 
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 	data = item_udata(item);
 
 	switch (item->tag) {
@@ -2089,7 +2110,10 @@ static const struct hid_device_id hid_have_special_driver[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS3_CONTROLLER) },
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS3_CONTROLLER) },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER) },
+<<<<<<< HEAD
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER) },
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) },
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE) },

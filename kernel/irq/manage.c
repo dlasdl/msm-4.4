@@ -339,10 +339,14 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
 	raw_spin_unlock_irqrestore(&desc->lock, flags);
 
 	if (old_notify) {
+<<<<<<< HEAD
 		if (cancel_work_sync(&old_notify->work)) {
 			/* Pending work had a ref, put that one too */
 			kref_put(&old_notify->kref, old_notify->release);
 		}
+=======
+		cancel_work_sync(&old_notify->work);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 		kref_put(&old_notify->kref, old_notify->release);
 	}
 

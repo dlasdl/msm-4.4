@@ -1446,15 +1446,6 @@ static int tmc_etr_bam_init(struct amba_device *adev,
 	return sps_register_bam_device(&bamdata->props, &bamdata->handle);
 }
 
-static void tmc_etr_bam_exit(struct tmc_drvdata *drvdata)
-{
-	struct tmc_etr_bam_data *bamdata = drvdata->bamdata;
-
-	if (!bamdata->handle)
-		return;
-	sps_deregister_bam_device(bamdata->handle);
-}
-
 static const struct file_operations tmc_fops = {
 	.owner		= THIS_MODULE,
 	.open		= tmc_open,
@@ -2000,6 +1991,7 @@ err_misc_register:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int tmc_remove(struct amba_device *adev)
 {
 	struct tmc_drvdata *drvdata = amba_get_drvdata(adev);
@@ -2013,6 +2005,8 @@ static int tmc_remove(struct amba_device *adev)
 	return 0;
 }
 
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 static struct amba_id tmc_ids[] = {
 	{
 		.id     = 0x0003b961,

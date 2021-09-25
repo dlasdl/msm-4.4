@@ -772,7 +772,11 @@ static int __check_input_term(struct mixer_build *state, int id,
 				struct uac3_input_terminal_descriptor *d = p1;
 
 				err = __check_input_term(state,
+<<<<<<< HEAD
 							d->bCSourceID, term);
+=======
+							 d->bCSourceID, term);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 				if (err < 0)
 					return err;
 
@@ -830,7 +834,11 @@ static int __check_input_term(struct mixer_build *state, int id,
 				struct uac_selector_unit_descriptor *d = p1;
 				/* call recursively to retrieve channel info */
 				err = __check_input_term(state,
+<<<<<<< HEAD
 							d->baSourceID[0], term);
+=======
+							 d->baSourceID[0], term);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 				if (err < 0)
 					return err;
 				/* virtual type */

@@ -760,7 +760,11 @@ ssize_t ipa3_read(struct file *filp, char __user *buf, size_t count,
 			if (msg->buff) {
 				if (count >= msg->meta.msg_len) {
 					if (copy_to_user(buf, msg->buff,
+<<<<<<< HEAD
 							  msg->meta.msg_len)) {
+=======
+							msg->meta.msg_len)) {
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 						ret = -EFAULT;
 						kfree(msg);
 						msg = NULL;

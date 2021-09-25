@@ -479,6 +479,10 @@ static int fastrpc_mmap_find(struct fastrpc_file *fl, int fd, uintptr_t va,
 			if (va >= map->va &&
 				va + len <= map->va + map->len &&
 				map->fd == fd) {
+				if (map->refs + 1 == INT_MAX) {
+					spin_unlock(&me->hlock);
+					return -ETOOMANYREFS;
+				}
 				map->refs++;
 				match = map;
 				break;
@@ -491,6 +495,10 @@ static int fastrpc_mmap_find(struct fastrpc_file *fl, int fd, uintptr_t va,
 			if (va >= map->va &&
 				va + len <= map->va + map->len &&
 				map->fd == fd) {
+				if (map->refs + 1 == INT_MAX) {
+					spin_unlock(&fl->hlock);
+					return -ETOOMANYREFS;
+				}
 				map->refs++;
 				match = map;
 				break;
@@ -2677,7 +2685,6 @@ static ssize_t fastrpc_debugfs_read(struct file *filp, char __user *buffer,
 	struct fastrpc_apps *me = &gfa;
 	struct fastrpc_file *fl = filp->private_data;
 	struct hlist_node *n;
-	struct fastrpc_buf *buf = NULL;
 	struct fastrpc_mmap *map = NULL;
 	struct fastrpc_mmap *gmaps = NULL;
 	struct smq_invoke_ctx *ictx = NULL;
@@ -2706,11 +2713,19 @@ static ssize_t fastrpc_debugfs_read(struct file *filp, char __user *buffer,
 			chan = &gcinfo[i];
 			len += scnprintf(fileinfo + len,
 				 DEBUGFS_SIZE - len, "%-8s", chan->subsys);
+<<<<<<< HEAD
 			len += scnprintf(fileinfo + len,
 				 DEBUGFS_SIZE - len, "|%-9d",
 				 chan->kref.refcount.counter);
 			len += scnprintf(fileinfo + len,
 				 DEBUGFS_SIZE - len, "|%-9d",
+=======
+			len += scnprintf(fileinfo + len,
+				 DEBUGFS_SIZE - len, "|%-9d",
+				 chan->kref.refcount.counter);
+			len += scnprintf(fileinfo + len,
+				 DEBUGFS_SIZE - len, "|%-9d",
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 				 chan->sesscount);
 			len += scnprintf(fileinfo + len,
 				 DEBUGFS_SIZE - len, "|%-14d",
@@ -2836,6 +2851,7 @@ static ssize_t fastrpc_debugfs_read(struct file *filp, char __user *buffer,
 		len += scnprintf(fileinfo + len, DEBUGFS_SIZE - len,
 			"%-20d|0x%-20lX\n\n",
 			map->secure, map->attr);
+<<<<<<< HEAD
 		}
 		len += scnprintf(fileinfo + len, DEBUGFS_SIZE - len,
 			"\n======%s %s %s======\n", title,
@@ -2852,6 +2868,8 @@ static ssize_t fastrpc_debugfs_read(struct file *filp, char __user *buffer,
 			DEBUGFS_SIZE - len,
 			"0x%-17p|0x%-17llX|%-19zu\n",
 			buf->virt, (uint64_t)buf->phys, buf->size);
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 		}
 		len += scnprintf(fileinfo + len, DEBUGFS_SIZE - len,
 			"\n%s %s %s\n", title,
@@ -2988,7 +3006,15 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
 		return err;
 	snprintf(strpid, PID_SIZE, "%d", current->pid);
 	buf_size = strlen(current->comm) + strlen("_") + strlen(strpid) + 1;
+<<<<<<< HEAD
 	fl->debug_buf = kzalloc(buf_size, GFP_KERNEL);
+=======
+	VERIFY(err, NULL != (fl->debug_buf = kzalloc(buf_size, GFP_KERNEL)));
+	if (err) {
+		kfree(fl);
+		return err;
+	}
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 	snprintf(fl->debug_buf, UL_SIZE, "%.10s%s%d",
 	current->comm, "_", current->pid);
 	debugfs_file = debugfs_create_file(fl->debug_buf, 0644,

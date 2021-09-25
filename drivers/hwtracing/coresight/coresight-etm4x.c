@@ -2868,6 +2868,7 @@ err_late_init:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int etm4_remove(struct amba_device *adev)
 {
 	struct etmv4_drvdata *drvdata = amba_get_drvdata(adev);
@@ -2881,6 +2882,8 @@ static int etm4_remove(struct amba_device *adev)
 	return 0;
 }
 
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 static struct amba_id etm4_ids[] = {
 	{       /* ETM 4.0 - Qualcomm */
 		.id	= 0x0003b95d,

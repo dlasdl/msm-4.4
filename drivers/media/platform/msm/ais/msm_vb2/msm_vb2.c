@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2012-2019, The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2012-2017, 2019 The Linux Foundation. All rights reserved.
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -42,8 +46,11 @@ static int msm_vb2_queue_setup(struct vb2_queue *q,
 			   data->type);
 		goto done;
 	}
+<<<<<<< HEAD
 	rc = 0;
 
+=======
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 done:
 	mutex_unlock(q->lock);
 	return rc;

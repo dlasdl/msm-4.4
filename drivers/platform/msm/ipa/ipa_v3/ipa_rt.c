@@ -1551,6 +1551,10 @@ int ipa3_reset_rt(enum ipa_ip_type ip, bool user_only)
 					hdr_entry->cookie != IPA_HDR_COOKIE) {
 						IPAERR_RL(
 						"Header already deleted\n");
+<<<<<<< HEAD
+=======
+						mutex_unlock(&ipa3_ctx->lock);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 						return -EINVAL;
 					}
 				} else if (rule->proc_ctx) {
@@ -1562,6 +1566,10 @@ int ipa3_reset_rt(enum ipa_ip_type ip, bool user_only)
 							IPA_PROC_HDR_COOKIE) {
 						IPAERR_RL(
 						"Proc entry already deleted\n");
+<<<<<<< HEAD
+=======
+						mutex_unlock(&ipa3_ctx->lock);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 						return -EINVAL;
 					}
 				}

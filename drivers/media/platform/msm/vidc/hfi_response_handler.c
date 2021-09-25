@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2012-2016, 2019 The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2012-2016,2019 The Linux Foundation. All rights reserved.
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -102,7 +106,12 @@ static enum msm_vidc_pixel_depth get_hal_pixel_depth(u32 hfi_bit_depth)
 static inline int validate_pkt_size(u32 rem_size, u32 msg_size)
 {
 	if (rem_size < msg_size) {
+<<<<<<< HEAD
 		dprintk(VIDC_ERR, "%s: bad_pkt_size: %d\n", __func__, rem_size);
+=======
+		dprintk(VIDC_ERR, "%s: bad_pkt_size: %d\n",
+			__func__, rem_size);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 		return false;
 	}
 	return true;

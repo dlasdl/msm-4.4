@@ -378,11 +378,17 @@ static inline unsigned long copy_from_user(void *to,
 	unsigned long ret;
 
 	if (likely(access_ok(VERIFY_READ, from, n))) {
+<<<<<<< HEAD
 		allow_user_access(to, from, n);
 		barrier_nospec();
 		ret = __copy_tofrom_user((__force void __user *)to, from, n);
 		prevent_user_access(to, from, n);
 		return ret;
+=======
+		check_object_size(to, n, false);
+		barrier_nospec();
+		return __copy_tofrom_user((__force void __user *)to, from, n);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 	}
 	memset(to, 0, n);
 	return n;
@@ -439,11 +445,18 @@ static inline unsigned long __copy_from_user_inatomic(void *to,
 			return 0;
 	}
 
+<<<<<<< HEAD
 	barrier_nospec();
 	allow_read_from_user(from, n);
 	ret = __copy_tofrom_user((__force void __user *)to, from, n);
 	prevent_read_from_user(from, n);
 	return ret;
+=======
+	check_object_size(to, n, false);
+
+	barrier_nospec();
+	return __copy_tofrom_user((__force void __user *)to, from, n);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 }
 
 static inline unsigned long __copy_to_user_inatomic(void __user *to,
@@ -472,10 +485,16 @@ static inline unsigned long __copy_to_user_inatomic(void __user *to,
 			return 0;
 	}
 
+<<<<<<< HEAD
 	allow_write_to_user(to, n);
 	ret = __copy_tofrom_user(to, (__force const void __user *)from, n);
 	prevent_write_to_user(to, n);
 	return ret;
+=======
+	check_object_size(from, n, true);
+
+	return __copy_tofrom_user(to, (__force const void __user *)from, n);
+>>>>>>> a3960f40b0f23776740f2813f3eb587397568cde
 }
 
 static inline unsigned long __copy_from_user(void *to,
